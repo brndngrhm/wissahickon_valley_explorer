@@ -1,0 +1,309 @@
+---
+title: "Wissahickon Valley Park Explorer"
+output: 
+  flexdashboard::flex_dashboard:
+    vertical_layout: fill
+    orientation: rows
+    horizontal_layout: scroll
+    source_code: embed
+    logo: media/hiking.png
+    theme: lumen
+    navbar:
+      - { icon: "fa-github", href: "https://github.com/", align: right}
+runtime: shiny
+---
+
+```{r setup, include = FALSE}
+library(dplyr)
+library(tidyr)
+library(flexdashboard)
+library(shiny)
+library(leaflet)
+library(XML) 
+
+#converts KMZ to GPZ
+#https://www.gpsvisualizer.com/convert_input
+
+```
+
+
+```{r import_layers_data}
+# trailheads, attractions and parking data from FOW map: https://www.google.com/maps/d/viewer?mid=13bnd0IRNwzTpI7VFPASNSWXC5yk&ll=40.046209997931044%2C-75.20679951607832&z=14
+trailheads_xml <- XML::xmlParse("map_layers/Trailhead_Kiosks.gpx") 
+attractions_xml <- XML::xmlParse("map_layers/Park_Attractions.gpx")
+parking_xml <- XML::xmlParse("map_layers/Parking_Areas.gpx")
+more_attractions_xml <- XML::xmlParse("map_layers/More_Attractions.gpx")
+unmarked_trailheads_xml <- XML::xmlParse("map_layers/Unmarked_Trailheads.gpx")
+misc_notes_xml <- XML::xmlParse("map_layers/Misc_Notes.gpx")
+
+```
+
+```{r import_hikes}
+gorgas_xml <- XML::xmlParse("hikes/Gorgas_Creek_Loop.gpx") 
+houston_meadows_xml <-  XML::xmlParse("hikes/Houston_Meadow_Loop.gpx") 
+
+```
+
+```{r parse_hike_xml}
+
+parse_hike_xml <- function(file){
+  
+  nodes <- XML::getNodeSet(file, "//ns:trk", "ns")
+  rows <- lapply(nodes, function(x) data.frame(xmlToList(x)))
+  
+  plyr::ldply(rows, data.frame) %>% 
+    reshape2::melt(id.vars = "name") %>%
+    mutate(type = ifelse(value < 0, "lng", "lat")) %>%
+    spread(type, value) %>%
+    mutate(lng = as.numeric(lng),
+           lat = as.numeric(lat),
+           type = "Hike"
+    ) %>%
+    rename(desc = 2)
+  
+}
+
+gorgas <- parse_hike_xml(gorgas_xml)
+houston_meadows_loop <- parse_hike_xml(houston_meadows_xml)
+
+master_hike <- dplyr::bind_rows(gorgas, houston_meadows_loop) %>%
+  mutate(desc = case_when(
+    name == "Gorgas Creek Loop" ~ "Clockwise loop. Starts and ends at Mt Airy Trailhead. 1.49 Mi., 105 ft. elevation",
+    name == "Houston Meadows Loop" ~ "Counter-clockwise loop. Starts and ends at Houston Playground. 2.48 Mi., 325 ft. elevation",
+    TRUE ~ "frog")
+    )
+
+```
+
+
+```{r parse_layer_xml}
+
+parse_map_xml <- function(file){
+  
+  #parse XML: gets nodes
+  nodes <- XML::getNodeSet(file, "//ns:wpt", "ns")
+  rows <- lapply(nodes, function(x) data.frame(xmlToList(x)))
+  
+  #convert to dataframe
+  df <- plyr::ldply(rows, data.frame) %>%
+    dplyr::rename(lat_lon = `.attrs`) %>%
+    mutate(lat_lon = as.numeric(as.character(lat_lon)),
+           type = ifelse(lat_lon < 0, "lng", "lat")
+    ) %>%
+    spread(type, lat_lon)
+}
+
+trailheads <- parse_map_xml(trailheads_xml) %>%
+  rename(desc = 2) %>%
+  mutate(type = "Trailheads")
+
+attractions <- parse_map_xml(attractions_xml) %>%
+  rename(desc = 2) %>%
+  mutate(type = "Attractions")
+
+parking <- parse_map_xml(parking_xml) %>%
+  rename(desc = 2) %>%
+  mutate(type = "Parking")
+
+more_attractions <- parse_map_xml(more_attractions_xml) %>%
+  rename(desc = 2) %>%
+  mutate(type = "Attractions")
+
+unmarked_trails <- parse_map_xml(unmarked_trailheads_xml) %>%
+  rename(desc = 2) %>%
+  mutate(type = "Unmarked Trails")
+
+misc_notes <- parse_map_xml(misc_notes_xml) %>%
+  rename(desc = 2) %>%
+  mutate(type = "Misc & Notes")
+
+master_map <- dplyr::bind_rows(trailheads, attractions, parking, more_attractions, unmarked_trails, misc_notes)  
+
+```
+
+
+Wissahickon Map
+======================================================================
+
+Sidebar {.sidebar}
+----------------------------
+
+```{r sidebar}
+
+shiny::checkboxGroupInput("layer_select",
+                          label = h3("Add/Remove Map Layers"),
+                          selected = c("Attractions", "Misc & Notes", "Trailheads"),
+                          choices = unique(sort(master_map$type))
+)
+```
+*Tip!* Click on icon in map to reveal any descriptions
+
+```{r}
+hr() 
+
+shiny::radioButtons("hike_select",
+                    label = h3("Add/Remove Some Hiking Routes"),
+                    selected = NULL,
+                    choices = c("None", sort(unique(master_hike$name)))
+)
+
+```
+*Tip!* Hover over route for description and distance
+
+```{r}
+hr() 
+shiny::radioButtons("map_style",
+                    label = h3("Change base map style"),
+                    selected = NULL,
+                    choices = c("Simple", "Detailed")
+)
+
+```
+
+
+`r hr()`
+`r hr()`
+*More Wissahickon Valley Info: [Friends of the Wissahickon](https://www.fow.org/)*  
+
+*Project Inspiration: [FOW Map](https://www.google.com/maps/d/viewer?mid=13bnd0IRNwzTpI7VFPASNSWXC5yk&ll=40.046209997931044%2C-75.20679951607832&z=14)*  
+
+*Hiker icon from [Font Awesome](https://fontawesome.com/license)*
+
+Row
+------------
+###  
+
+```{r map}
+
+#ride map
+renderLeaflet({
+
+  #create dataframe for map layers
+  map_data <- master_map %>%
+    mutate(
+      type = as.factor(type),
+      icon = case_when(
+        type == "Trailheads" ~ "star",
+        type == "Attractions" ~ "flag",
+        type == "Parking" ~ "car",
+        type == "Unmarked Trails" ~ "angle-double-up",
+        type == "Misc & Notes" ~ "exclamation",
+        TRUE ~ "frog",
+      ),
+      markerColor = case_when(
+        type == "Trailheads" ~ "cadetblue",
+        type == "Attractions" ~ "darkpurple",
+        type == "Parking" ~ "green",
+        type == "Unmarked Trails" ~ "gray",
+        type == "Misc & Notes" ~ "beige",
+        TRUE ~ "pink",
+      ),
+      icon_color = ifelse(markerColor %in% c("darkpurple", "cadetblue", "darkblue", "green", "gray"), "#ffffff", "#000000")
+    ) %>%
+    filter(type %in% input$layer_select,) %>%
+    ungroup() %>%
+    droplevels()
+  
+  #get font awesome icons
+  my_icons <- awesomeIcons(icon = map_data$icon,
+                           markerColor = map_data$markerColor,
+                           iconColor = map_data$icon_color,
+                           library = "fa")
+  
+  #create icon set for legend
+  IconSet <- awesomeIconList(
+    "Trailheads" = makeAwesomeIcon(icon = 'star', markerColor = 'cadetblue', iconColor = 'white', library = "fa"),
+    "Attractions" = makeAwesomeIcon(icon = 'flag', markerColor = 'darkpurple', iconColor = 'white', library = "fa"),
+    "Parking" = makeAwesomeIcon(icon = 'car', markerColor = 'green', iconColor = 'white', library = "fa"),
+    "Unmarked Trails" = makeAwesomeIcon(icon = 'angle-double-up', markerColor = 'gray', iconColor = 'white', library = "fa"),
+    "Misc & Notes" = makeAwesomeIcon(icon = 'exclamation', markerColor = 'beige', iconColor = 'black', library = "fa")
+  )
+  
+  
+  #create map legend: https://stackoverflow.com/questions/47064921/leaflet-legend-for-addawesomemarkers-function-with-icons
+  markerLegendHTML <- function(IconSet) {
+    # container div:
+    legendHtml <- "<div style='padding: 10px; padding-bottom: 10px;'><h4 style='padding-top:0; padding-bottom:10px; margin: 0;'> Map Icon Legend </h4>"
+    
+    n <- 1
+    # add each icon for font-awesome icons icons:
+    for (Icon in IconSet) {
+      if (Icon[["library"]] == "fa") {
+        legendHtml<- paste0(legendHtml, "<div style='width: auto; height: 45px'>",
+                            "<div style='position: relative; display: inline-block; width: 36px; height: 45px' class='awesome-marker-icon-",Icon[["markerColor"]]," awesome-marker'>",
+                            "<i style='margin-left: 4px; margin-top: 11px; 'class= 'fa fa-",Icon[["icon"]]," fa-inverse'></i>",
+                            "</div>",
+                            "<p style='position: relative; top: 10px; display: inline-block; ' >", names(IconSet)[n] ,"</p>",
+                            "</div>")    
+      }
+      n <- n + 1
+    }
+    paste0(legendHtml, "</div>")
+  }
+
+  #create dataframe for hiking routes
+  hike_data <- master_hike %>% 
+    filter(name == input$hike_select)
+  
+  # create base map and select map style based on user input
+
+  wiss_map <- if(input$map_style == "Simple"){
+    
+    leaflet(map_data) %>%
+      addProviderTiles(providers$Hydda.Full) %>%
+      setView(lng = -75.21111265778796,
+              lat = 40.0493331396181,
+              zoom = 14
+      )
+    
+  } else {
+    
+    leaflet(map_data) %>%
+      addProviderTiles(providers$HikeBike.HikeBike) %>%
+      setView(lng = -75.21111265778796,
+              lat = 40.0493331396181,
+              zoom = 14
+      )
+  }
+  
+
+  #map it
+  if(input$hike_select == "None") {
+    
+  wiss_map %>%  
+    leaflet::addAwesomeMarkers(~lng,
+                               ~lat,
+                               popup = ~ as.character(desc),
+                               label = ~ as.character(name),
+                               labelOptions = labelOptions(textsize = '13px'),
+                               icon = ~ my_icons) %>% 
+      addControl(html = markerLegendHTML(IconSet = IconSet),
+                 position = "bottomleft")
+    
+  } else {
+    
+    wiss_map %>% 
+      leaflet::addAwesomeMarkers(~lng,
+                                 ~lat,
+                                 popup = ~ as.character(desc),
+                                 label = ~ as.character(name),
+                                 labelOptions = labelOptions(textsize = '13px'),
+                                 icon = ~ my_icons) %>%
+      setView(lng = mean(hike_data$lng),
+              lat = mean(hike_data$lat),
+              zoom = 15
+      ) %>%
+      leaflet::addPolylines(hike_data$lng, 
+                            hike_data$lat,
+                            weight = 8, 
+                            color = "#ff5719",
+                            stroke = TRUE, 
+                            fillOpacity = 500,
+                            label = unique(hike_data$desc),
+                            labelOptions = labelOptions(textsize = '15px')) %>%
+      addControl(html = markerLegendHTML(IconSet = IconSet),
+                 position = "bottomleft")
+  }
+})
+
+```

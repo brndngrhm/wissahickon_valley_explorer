@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<gpx version="1.1" creator="GPS Visualizer https://www.gpsvisualizer.com/" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<wpt lat="40.0210635" lon="-75.2036318">
+  <name>to daisy field 1</name>
+  <desc>up steep hill, top gets overgrown</desc>
+</wpt>
+<wpt lat="40.022242" lon="-75.2017861">
+  <name>to daisy field 2</name>
+</wpt>
+<wpt lat="40.0207924" lon="-75.2036942">
+  <name>to lincoln drive paved trail</name>
+</wpt>
+<wpt lat="40.0211354" lon="-75.2023712">
+  <name>to daisy field 3</name>
+</wpt>
+<wpt lat="40.017281" lon="-75.2040154">
+  <name>to peninsula</name>
+  <desc>loops back to marked trail. kind of a cool view of the creek/valley</desc>
+</wpt>
+<wpt lat="40.0239554" lon="-75.1998396">
+  <name>to yellow trail</name>
+  <desc>up steep hill</desc>
+</wpt>
+<wpt lat="40.0285839" lon="-75.1932276">
+  <name>to ??</name>
+</wpt>
+<wpt lat="40.0421801" lon="-75.2099184">
+  <name>to narrow bridge</name>
+  <desc>take you across the top of it, connects to White Trail on other side</desc>
+</wpt>
+</gpx>

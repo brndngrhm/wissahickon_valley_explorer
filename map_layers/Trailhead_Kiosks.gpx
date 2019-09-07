@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<gpx version="1.1" creator="GDAL 2.2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogr="http://osgeo.org/gdal" xmlns="http://www.topografix.com/GPX/1/1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata><bounds minlat="40.015721999999997" minlon="-75.235439000000000" maxlat="40.083407999999999" maxlon="-75.192232000000004"/></metadata>                
+<wpt lat="40.053589" lon="-75.224935">
+  <name>Wigard Avenue</name>
+  <extensions>
+    <ogr:description>732 Wigard St, Philadelphia, PA 19128</ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.037633" lon="-75.203142">
+  <name>Kitchens Lane 
+</name>
+  <extensions>
+    <ogr:description>1099 Kitchens Ln, Philadelphia, PA 19119</ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.055814" lon="-75.202498">
+  <name>Cresheim Creek</name>
+  <extensions>
+    <ogr:description>7501 St Martin's Ln, Philadelphia, PA 19118            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.083408" lon="-75.232913">
+  <name>Northwestern Avenue </name>
+  <extensions>
+    <ogr:description>200 Northwestern Avenue Philadelphia, PA 19128            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.076858" lon="-75.216414">
+  <name>Crefeld Street </name>
+  <extensions>
+    <ogr:description>8982 Crefeld St, Philadelphia, PA 19118             </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.069193" lon="-75.231573">
+  <name>Houston Playground </name>
+  <extensions>
+    <ogr:description>900 Grakyn Ln, Philadelphia, PA 19128</ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.015722" lon="-75.20668">
+  <name>Lincoln Drive Trail </name>
+  <extensions>
+    <ogr:description>4909 Ridge Avenue, Philadelphia, PA 19127       </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.02559" lon="-75.199886">
+  <name>Hermit Lane </name>
+  <extensions>
+    <ogr:description>5301 Hermit Ln, Philadelphia, PA 19128            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.027729" lon="-75.192897">
+  <name>Ten Box </name>
+  <extensions>
+    <ogr:description>4520 Forbidden Drive            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.028876" lon="-75.192232">
+  <name>Historic RittenhouseTown </name>
+  <extensions>
+    <ogr:description>206 RittenhouseTown Ln, Philadelphia, PA 19144</ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.030887" lon="-75.195266">
+  <name>Blue Bell</name>
+  <extensions>
+    <ogr:description>842 West Walnut Lane, Philadelphia, PA 19144    &lt;br&gt;               </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.034837" lon="-75.209545">
+  <name>Jannette Street </name>
+  <extensions>
+    <ogr:description>699 Green Ln, Philadelphia, PA 19128          </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.042977" lon="-75.219683">
+  <name>Gorgas Lane </name>
+  <extensions>
+    <ogr:description>638 Gorgas Ln, Philadelphia, PA 19128             </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.043227" lon="-75.208803">
+  <name>West Mount Airy Ave </name>
+  <extensions>
+    <ogr:description>952 W Mt Airy Ave, Philadelphia, PA 19119</ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.046005" lon="-75.216125">
+  <name>Pachella Field</name>
+  <extensions>
+    <ogr:description>6839 Henry Avenue, Philadelphia, PA 19128  </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.056383" lon="-75.197295">
+  <name>Cresheim Trail </name>
+  <extensions>
+    <ogr:description>301 W Allens Ln, Philadelphia, PA 19119             </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.053736" lon="-75.217986">
+  <name>Valley Green Inn - South </name>
+  <extensions>
+    <ogr:description>7598 Forbidden Drive           </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.056316" lon="-75.214602">
+  <name>Valley Green Rd</name>
+  <extensions>
+    <ogr:description>71 Valley Green Rd            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.062099" lon="-75.21353">
+  <name>Hartwell Lane </name>
+  <extensions>
+    <ogr:description>686 W Hartwell Ln, Philadelphia, PA 19118             </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.061856" lon="-75.226864">
+  <name>Summit Avenue</name>
+  <extensions>
+    <ogr:description>999 Summit Ave, Philadelphia, PA 19128             </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.06967" lon="-75.21592">
+  <name>Rex Avenue</name>
+  <extensions>
+    <ogr:description>501 Rex Ave, Philadelphia, PA 19118             </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.073069" lon="-75.215744">
+  <name>Chestnut Hill Avenue </name>
+  <extensions>
+    <ogr:description>427 W Chestnut Hill Ave, Philadelphia, PA 19118            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.079588" lon="-75.225169">
+  <name>Bells Mill Rd - East</name>
+  <extensions>
+    <ogr:description>42 West Bells Mill Rd</ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.07892" lon="-75.225958">
+  <name>Bells Mill Rd - West </name>
+  <extensions>
+    <ogr:description>9090 Forbidden Drive            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.08043" lon="-75.235439">
+  <name>Wissahickon Environmental Center </name>
+  <extensions>
+    <ogr:description>990 Northwestern Ave, Philadelphia, PA 19128            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.054582" lon="-75.218226">
+  <name>Valley Green Inn</name>
+  <extensions>
+    <ogr:description>7598 Forbidden Drive            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.056198" lon="-75.21831">
+  <name>Valley Green Inn - North </name>
+  <extensions>
+    <ogr:description>7640 Forbidden Drive            </ogr:description>
+  </extensions>
+</wpt>
+<wpt lat="40.01475" lon="-75.20594">
+  <name>Lincoln Drive East</name>
+  <extensions>
+    <ogr:description>Lincoln Drive East            </ogr:description>
+  </extensions>
+</wpt>
+</gpx>
