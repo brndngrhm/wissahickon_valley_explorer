@@ -41,6 +41,7 @@ misc_notes_xml <- XML::xmlParse("map_layers/Misc_Notes.gpx")
 ```{r import_hikes}
 gorgas_xml <- XML::xmlParse("hikes/Gorgas_Creek_Loop.gpx") 
 houston_meadows_xml <-  XML::xmlParse("hikes/Houston_Meadow_Loop.gpx") 
+andorra_meadow_xml <-  XML::xmlParse("hikes/Andorra_Meadow_Loop.gpx") 
 
 ```
 
@@ -65,11 +66,14 @@ parse_hike_xml <- function(file){
 
 gorgas <- parse_hike_xml(gorgas_xml)
 houston_meadows_loop <- parse_hike_xml(houston_meadows_xml)
+andorra_meadow_loop <- parse_hike_xml(andorra_meadow_xml)
 
-master_hike <- dplyr::bind_rows(gorgas, houston_meadows_loop) %>%
+
+master_hike <- dplyr::bind_rows(gorgas, houston_meadows_loop, andorra_meadow_loop) %>%
   mutate(desc = case_when(
     name == "Gorgas Creek Loop" ~ "Clockwise loop. Starts and ends at Mt Airy Trailhead. 1.49 Mi., 105 ft. elevation",
     name == "Houston Meadows Loop" ~ "Counter-clockwise loop. Starts and ends at Houston Playground. 2.48 Mi., 325 ft. elevation",
+    name == "Andorra Meadow Loop" ~ "Clockwise loop. 1.52 Mi., 104 ft. elevation",
     TRUE ~ "frog")
     )
 
