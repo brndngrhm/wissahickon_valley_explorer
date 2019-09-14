@@ -23,35 +23,20 @@ library(XML)
 
 #converts KMZ to GPZ
 #https://www.gpsvisualizer.com/convert_input
-
-```
-
-
-```{r import_layers_data}
-# trailheads, attractions and parking data from FOW map: https://www.google.com/maps/d/viewer?mid=13bnd0IRNwzTpI7VFPASNSWXC5yk&ll=40.046209997931044%2C-75.20679951607832&z=14
-trailheads_xml <- XML::xmlParse("map_layers/Trailhead_Kiosks.gpx") 
-attractions_xml <- XML::xmlParse("map_layers/Park_Attractions.gpx")
-parking_xml <- XML::xmlParse("map_layers/Parking_Areas.gpx")
-more_attractions_xml <- XML::xmlParse("map_layers/More_Attractions.gpx")
-unmarked_trailheads_xml <- XML::xmlParse("map_layers/Unmarked_Trailheads.gpx")
-misc_notes_xml <- XML::xmlParse("map_layers/Misc_Notes.gpx")
-
-```
-
-```{r import_hikes}
-gorgas_xml <- XML::xmlParse("hikes/Gorgas_Creek_Loop.gpx") 
-houston_meadows_xml <-  XML::xmlParse("hikes/Houston_Meadow_Loop.gpx") 
-andorra_meadow_xml <-  XML::xmlParse("hikes/Andorra_Meadow_Loop.gpx") 
-
 ```
 
 ```{r parse_hike_xml}
-
+#function to parse hike GPX
 parse_hike_xml <- function(file){
   
-  nodes <- XML::getNodeSet(file, "//ns:trk", "ns")
+  #import hike and parse
+  hike_xml <- XML::xmlParse(file)
+  
+  #more formatting
+  nodes <- XML::getNodeSet(hike_xml, "//ns:trk", "ns")
   rows <- lapply(nodes, function(x) data.frame(xmlToList(x)))
   
+  #usable dataframe
   plyr::ldply(rows, data.frame) %>% 
     reshape2::melt(id.vars = "name") %>%
     mutate(type = ifelse(value < 0, "lng", "lat")) %>%
@@ -64,28 +49,41 @@ parse_hike_xml <- function(file){
   
 }
 
-gorgas <- parse_hike_xml(gorgas_xml)
-houston_meadows_loop <- parse_hike_xml(houston_meadows_xml)
-andorra_meadow_loop <- parse_hike_xml(andorra_meadow_xml)
+#stage hike gpx files
+hike_files <- list.files('hikes/', pattern = "\\.gpx$")
 
+#store hikes
+master_hike <- list()
 
-master_hike <- dplyr::bind_rows(gorgas, houston_meadows_loop, andorra_meadow_loop) %>%
+#loop through each hike file and apply parse function, combine into master file
+for(i in hike_files){
+  hike <- parse_hike_xml(paste0("hikes/", i))
+  master_hike <- dplyr::bind_rows(master_hike, hike)
+}
+
+#add some custom descriptions to each hike
+master_hike <- master_hike %>%
   mutate(desc = case_when(
     name == "Gorgas Creek Loop" ~ "Clockwise loop. Starts and ends at Mt Airy Trailhead. 1.49 Mi., 105 ft. elevation",
     name == "Houston Meadows Loop" ~ "Counter-clockwise loop. Starts and ends at Houston Playground. 2.48 Mi., 325 ft. elevation",
     name == "Andorra Meadow Loop" ~ "Clockwise loop. 1.52 Mi., 104 ft. elevation",
+    name == "Lavender/Orange Loop" ~ "Clockwise loop. Park on Crefeld and go through gated park entrance. 1.89 Mi., 233 ft. elevation",
     TRUE ~ "frog")
     )
 
 ```
 
 
-```{r parse_layer_xml}
+```{r parse_map_layer_xml}
 
+#function to parse map marker xml
 parse_map_xml <- function(file){
   
+  #import map layer and parse
+  map_xml <- XML::xmlParse(file)
+  
   #parse XML: gets nodes
-  nodes <- XML::getNodeSet(file, "//ns:wpt", "ns")
+  nodes <- XML::getNodeSet(map_xml, "//ns:wpt", "ns")
   rows <- lapply(nodes, function(x) data.frame(xmlToList(x)))
   
   #convert to dataframe
@@ -94,34 +92,33 @@ parse_map_xml <- function(file){
     mutate(lat_lon = as.numeric(as.character(lat_lon)),
            type = ifelse(lat_lon < 0, "lng", "lat")
     ) %>%
-    spread(type, lat_lon)
+    spread(type, lat_lon) %>%
+    rename(desc = 2)
 }
 
-trailheads <- parse_map_xml(trailheads_xml) %>%
-  rename(desc = 2) %>%
-  mutate(type = "Trailheads")
+#stage map gpx files
+map_files <- list.files('map_layers/', pattern = "\\.gpx$")
 
-attractions <- parse_map_xml(attractions_xml) %>%
-  rename(desc = 2) %>%
-  mutate(type = "Attractions")
+master_map <- list()
 
-parking <- parse_map_xml(parking_xml) %>%
-  rename(desc = 2) %>%
-  mutate(type = "Parking")
+for(i in map_files){
+  marker <- parse_map_xml(paste0("map_layers/", i)) %>%
+    mutate(type = i)
+  master_map <- dplyr::bind_rows(master_map, marker)
+}
 
-more_attractions <- parse_map_xml(more_attractions_xml) %>%
-  rename(desc = 2) %>%
-  mutate(type = "Attractions")
-
-unmarked_trails <- parse_map_xml(unmarked_trailheads_xml) %>%
-  rename(desc = 2) %>%
-  mutate(type = "Unmarked Trails")
-
-misc_notes <- parse_map_xml(misc_notes_xml) %>%
-  rename(desc = 2) %>%
-  mutate(type = "Misc & Notes")
-
-master_map <- dplyr::bind_rows(trailheads, attractions, parking, more_attractions, unmarked_trails, misc_notes)  
+# format type column
+master_map <- master_map %>%
+  mutate(type = case_when(
+    type == "Trailhead_Kiosks.gpx" ~ "Trailheads",
+    type == "Park_Attractions.gpx" ~ "Attractions",
+    type == "More_Attractions.gpx" ~ "Attractions",
+    type == "Parking_Areas.gpx" ~ "Parking",
+    type == "Unmarked_Trailheads.gpx" ~ "Unmarked Trails",
+    type == "Misc_Notes.gpx" ~ "Misc & Notes",
+    TRUE ~ 'frog'
+  )
+  )
 
 ```
 
