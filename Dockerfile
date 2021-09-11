@@ -36,7 +36,10 @@ RUN Rscript -e 'install.packages("renv")'
 RUN Rscript -e 'renv::restore()'
 
 # expose port on Docker container
-EXPOSE 8080
+EXPOSE 3838
 
-# run app as localhost and on exposed port in Docker container
-CMD ["R", "-e", "shiny::runApp('/app/wiss_map.Rmd', host = '0.0.0.0', port = 8080)"]
+# run shiny app as localhost and on exposed port in Docker container
+# CMD ["R", "-e", "shiny::runApp('/app/wiss_map.Rmd', host = '0.0.0.0', port = 3838)"]
+
+# run flexdashboard as localhost and on exposed port in Docker container
+CMD ["R", "-e", "rmarkdown::run('/app/wiss_map.Rmd', shiny_args = list(port = 3838, host = '0.0.0.0'))"]
