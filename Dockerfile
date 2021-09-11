@@ -4,6 +4,7 @@
 # https://medium.com/analytics-vidhya/deploying-a-shiny-flexdashboard-with-docker-cca338a10d12
 
 # Base image https://hub.docker.com/u/rocker/ 
+
 FROM rocker/rstudio 
 
 # system libraries of general use
@@ -38,4 +39,4 @@ RUN Rscript -e 'renv::restore()'
 EXPOSE 8080
 
 # run app as localhost and on exposed port in Docker container
-CMD ["R", "-e", "shiny::runApp('/app/app.R', host = '0.0.0.0', port = 8080)"]
+CMD ["R", "-e", "shiny::runApp('/app/wiss_map.Rmd', host = '0.0.0.0', port = 8080)"]
