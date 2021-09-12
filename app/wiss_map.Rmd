@@ -64,10 +64,8 @@ parse_hike_xml <-
     spread(type, value) %>%
     mutate(lng = as.numeric(lng),
            lat = as.numeric(lat),
-           type = "Hike"
-    ) %>%
+           type = "Hike") %>%
     rename(desc = 2)
-  
 }
 
 #stage hike gpx files
