@@ -5,8 +5,9 @@ account: brndngrhm
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1161776
-bundleId: 2395604
+bundleId: 2413009
 url: https://brndngrhm.shinyapps.io/Wissahickon_Valley_Park_Explorer/
-when: 1567900434.39695
+when: 1568420228.46392
 asMultiple: FALSE
 asStatic: FALSE
+additionalFiles: map_layers/Misc_Notes.gpx|map_layers/More_Attractions.gpx|map_layers/Park_Attractions.gpx|map_layers/Parking_Areas.gpx|map_layers/Trailhead_Kiosks.gpx|map_layers/Unmarked_Trailheads.gpx|hikes/Andorra_Meadow_Loop.gpx|hikes/Gorgas_Creek_Loop.gpx|hikes/Houston_Meadow_Loop.gpx|hikes/Lavender_Orange_Loop.gpx
